@@ -9,3 +9,64 @@ format:
     fig-pos: 'H' #this  makes sure that figures are placed directly underneath code
 bibliography: "references.bib"
 ---
+
+
+
+```{r}
+#| include: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+#### Workspace set-up ####
+
+# install.packages("tidyverse")
+# install.packages("janitor")
+# install.packages("modelsummary")
+# install.packages("lubridate")
+
+library(tidyverse)
+library(janitor)
+library(modelsummary)
+library(lubridate)
+
+```
+
+# Introduction
+
+
+# Data Collection 
+
+## Overview
+
+## Survey Description
+
+## Population
+
+## Frame
+
+## Stratification
+
+## Sample
+
+## Non-response and Imputation
+
+## Survey Design
+
+## Bias
+
+# Data Description
+
+## Overview
+
+## Variables of Interest
+
+# Results
+
+# Discussion
+
+# Conclusion
+
+# References
+
+# Appendix A
+
