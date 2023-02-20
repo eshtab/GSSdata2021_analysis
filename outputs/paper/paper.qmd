@@ -1,0 +1,11 @@
+---
+title: "GSS Data for 2021"
+author: "Eshta Bhardwaj"
+thanks: "Code and data available at: https://github.com/eshtab/GSS2021"
+date: "February 20 2023"
+abstract: "Please fill"
+format: 
+  pdf:
+    fig-pos: 'H' #this  makes sure that figures are placed directly underneath code
+bibliography: "references.bib"
+---
