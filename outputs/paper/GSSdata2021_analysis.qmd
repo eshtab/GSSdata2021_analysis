@@ -1,0 +1,374 @@
+---
+title: "Analysis of Opinions on Women's Role in Caregiving and Labour with 2021 GSS Data"
+author: "Eshta Bhardwaj"
+thanks: "Code and data available at: https://github.com/eshtab/GSSdata2021_analysis"
+date: "April 21 2023"
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+number-sections: true
+format: 
+  pdf:
+    fig-pos: 'H' #this  makes sure that figures are placed directly underneath code
+bibliography: "references.bib"
+toc: true
+---
+
+
+```{r}
+#| include: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+#### Workspace set-up ####
+
+library(tidyverse)
+library(janitor)
+library(modelsummary)
+library(lubridate)
+
+```
+
+# Introduction
+
+The introduction is self-contained and tells a reader everything they need to know including: 1) broader context to motivate; 2) some detail about what the paper is about; 3) a clear gap that needs to be filled; 4) what was done; 5) what was found; 6) why it is important; 7) the structure of the paper. A reader should be able to read only the introduction and know what was done, why, and what was found. Likely 3 or 4 paragraphs, or 10 per cent of total.
+
+# Data Collection 
+
+## Survey Design
+
+## Non-response and Imputation
+
+# Data Description
+
+## Overview
+
+## Data Cleaning
+
+## Variables of Interest
+
+```{r}
+#| include: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+
+# read in data from inputs folder of R project
+cleaned_data <-
+  read_csv(
+    file = "./../../inputs/data/cleaned_data.csv",
+    show_col_types = FALSE,
+  )
+```
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+# summary visualizations for each variable
+
+# sex
+pie(table(cleaned_data$sex), 
+    labels = paste(round(prop.table(table(cleaned_data$sex))*100), "%", sep = ""), 
+    col = rainbow(2),
+    main = "Sex at Birth")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+# age
+cleaned_data |>
+  ggplot(mapping = aes(x = age)) +
+  geom_bar() +
+  labs(
+    x = "Age",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# marital status
+cleaned_data |>
+  ggplot(mapping = aes(x = marital_status)) +
+  geom_bar() +
+  labs(
+    x = "Marital Status",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# make degree a  factored variable to enable ordering
+cleaned_data <-
+  cleaned_data |>
+  mutate(
+    degree = factor(degree),
+    degree = fct_relevel(
+      degree,
+      "Less than High School",
+      "High School",
+      "Associate/Junior College",
+      "Bachelors",
+      "Graduate",
+      NA
+    )
+  )
+# degree
+cleaned_data |>
+  ggplot(mapping = aes(x = degree)) +
+  geom_bar() +
+  labs(
+    x = "Degree",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# occ_prestige
+hist(cleaned_data$occ_prestige,
+     xlab = 'Prestige Score', ylab = 'Number of Responses', main = 'Occupational Prestige Scores')
+
+# skipping industry
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# num_children
+cleaned_data |>
+  ggplot(mapping = aes(x = num_children)) +
+  geom_bar() +
+  labs(
+    x = "Number of Children",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# op working mother
+pie(table(cleaned_data$op_working_mother), 
+    labels = paste(cleaned_data$op_working_mother, sep =  " ", 
+                   round(prop.table(table(cleaned_data$op_working_mother))*100), "%"), 
+                   main = "Opinion on whether 'A working mother can establish just as warm and secure a
+relationship with her children as a mother who does not work'.",
+    col = rainbow(n_distinct(cleaned_data$op_working_mother)))
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# op preschool
+pie(table(cleaned_data$op_preschool), 
+    labels = paste(cleaned_data$op_preschool, sep =  " ", 
+                   round(prop.table(table(cleaned_data$op_preschool))*100), "%"), 
+                   main = "Opinion on whether 'A preschool child is likely to suffer if his or her mother works'.",
+    col = rainbow(n_distinct(cleaned_data$op_preschool)))
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# op family
+pie(table(cleaned_data$op_family), 
+    labels = paste(cleaned_data$op_family, sep =  " ", 
+                   round(prop.table(table(cleaned_data$op_family))*100), "%"), 
+                   main = "Opinion on whether 'It is much better for everyone involved if the man is the
+achiever outside the home and the woman takes care of the
+home and family'.",
+    col = rainbow(n_distinct(cleaned_data$op_family)))
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# op meovrwrk
+pie(table(cleaned_data$op_men_over_work), 
+    labels = paste(cleaned_data$op_men_over_work, sep =  " ", 
+                   round(prop.table(table(cleaned_data$op_men_over_work))*100), "%"), 
+                   main = "Opinion on whether 'Family life often suffers because men concentrate too much on their work'.",
+    col = rainbow(n_distinct(cleaned_data$op_men_over_work)))
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# op childcare
+pie(table(cleaned_data$op_childcare), 
+    labels = paste(cleaned_data$op_childcare, sep =  " ", 
+                   round(prop.table(table(cleaned_data$op_childcare))*100), "%"), 
+                   main = "Opinion on whether 'We are spending too much, too little, or about the right amount on) Assistance for childcare'.",
+    col = rainbow(n_distinct(cleaned_data$op_childcare)))
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# work status
+cleaned_data |>
+  ggplot(mapping = aes(x = work_status)) +
+  geom_bar() +
+  labs(
+    x = "Work Status",
+    y = "Number of Responses"
+  ) +
+  scale_x_discrete(labels = function(x) 
+    stringr::str_wrap(x, width = 6)) +
+  #theme(axis.text.x = element_text(angle = 20, hjust=1)) +
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+# hours_worked
+cleaned_data |>
+  ggplot(mapping = aes(x = hours_worked)) +
+  geom_bar() +
+  labs(
+    x = "Number of Hours Worked",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) + 
+  scale_fill_brewer(palette = "Set1")
+```
+
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+# make ever_worked a  factored variable to enable ordering
+cleaned_data <-
+  cleaned_data |>
+  mutate(
+    ever_worked = factor(ever_worked),
+    ever_worked = fct_relevel(
+      ever_worked,
+      "YES",
+      "NO",
+      "Inapplicable",
+      "No answer",
+      "Skipped on Web",
+    )
+  )
+# ever_worked
+cleaned_data |>
+  ggplot(mapping = aes(x = ever_worked)) +
+  geom_bar() +
+  labs(
+    x = "Answers to 'Ever Worked?'",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  scale_fill_brewer(palette = "Set1")
+
+```
+
+# Results
+
+```{r}
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+
+# Look at all opinions broken down by men vs women 
+
+# make op_working_mother a factored variable to enable ordering
+cleaned_data <-
+  cleaned_data |>
+  mutate(
+    op_working_mother = factor(op_working_mother),
+    op_working_mother = fct_relevel(
+      op_working_mother,
+      "Strongly Agree",
+      "Agree",
+      "Disagree",
+      "Strongly Disagree",
+      NA
+    )
+  )
+
+# op_working_mother
+cleaned_data |>
+  ggplot(mapping = aes(x = op_working_mother)) +
+  geom_bar() +
+  labs(
+    x = "Opinion on whether 'A working mother can establish just as warm and secure a
+relationship with her children as a mother who does not work'",
+    y = "Number of Responses"
+  ) +
+  theme_classic() +
+  # https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  scale_fill_brewer(palette = "Set1") +
+  # subplots by sex at birth
+  facet_wrap(
+    ~sex,
+    scales = "free_x"
+  )
+
+```
+
+
+# Discussion
+- note some opinions have 4 scale others have 5
+
+# Conclusion
+
+\newpage
+
+\appendix
+
+# Appendix  {.unnumbered}
+
+# Survey
+\newpage
+
+# References
