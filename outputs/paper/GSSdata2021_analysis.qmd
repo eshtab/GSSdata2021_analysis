@@ -220,11 +220,13 @@ home and family'.",
 #| echo: FALSE
 #| warning: FALSE
 #| message: FALSE
+#| fig-cap: Opinion on whether 'Family life often suffers because men concentrate too much on their work'.
+
+
 # op meovrwrk
 pie(table(cleaned_data$op_men_over_work), 
     labels = paste(cleaned_data$op_men_over_work, sep =  " ", 
                    round(prop.table(table(cleaned_data$op_men_over_work))*100), "%"), 
-                   main = "Opinion on whether 'Family life often suffers because men concentrate too much on their work'.",
     col = rainbow(n_distinct(cleaned_data$op_men_over_work)))
 ```
 
@@ -255,7 +257,7 @@ cleaned_data |>
     y = "Number of Responses"
   ) +
   scale_x_discrete(labels = function(x) 
-    stringr::str_wrap(x, width = 6)) +
+    stringr::str_wrap(x, width = 4)) +
   #theme(axis.text.x = element_text(angle = 20, hjust=1)) +
   scale_fill_brewer(palette = "Set1")
 ```
